@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phone shortlist | 9-phone comparison</title>
+  <style>
+    :root { color-scheme: light; --ink:#182a3c; --muted:#526579; --line:#dce5ed; --accent:#006c68; --paper:#fff; --bg:#f1f5f8; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
+    a { color:#006b91; text-underline-offset:3px; }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    .wrap { max-width:1680px; margin:auto; padding:32px; }
+    .hero { background:#102f40; color:#fff; border-radius:22px; padding:36px; position:relative; overflow:hidden; }
+    .eyebrow { text-transform:uppercase; letter-spacing:2px; font-size:12px; font-weight:750; color:#8ae0d3; }
+    h1 { font-size:clamp(28px,4vw,46px); letter-spacing:-1.5px; line-height:1.15; margin:12px 0; }
+    .hero p { max-width:820px; color:#cfdee7; margin-bottom:0; }
+    .meta { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+    .meta span { background:#254757; border:1px solid #3b5b6b; border-radius:30px; padding:6px 12px; font-size:12px; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:22px 0; }
+    .card { padding:22px; background:white; border:1px solid var(--line); border-radius:16px; border-top:4px solid var(--accent); }
+    .card h2 { font-size:19px; margin:8px 0; }
+    .card p { color:var(--muted); margin:8px 0 0; font-size:14px; }
+    .label { font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--accent); }
+    .price { font-size:24px; font-weight:800; letter-spacing:-.5px; }
+    .notice { border:1px solid #ead59c; background:#fff9e9; border-radius:14px; padding:18px 22px; font-size:14px; }
+    .notice p { margin:6px 0; }
+    .toolbar { background:white; border:1px solid var(--line); border-radius:16px; padding:22px; margin:22px 0; }
+    .toolbar-top { display:flex; justify-content:space-between; gap:18px; align-items:center; flex-wrap:wrap; }
+    .toolbar h2 { margin:0; font-size:20px; }
+    .actions { display:flex; flex-wrap:wrap; gap:8px; }
+    button { border:1px solid #c8d7e0; border-radius:8px; padding:8px 13px; background:#fff; color:var(--ink); font-weight:650; }
+    button:hover { background:#edf7f5; border-color:var(--accent); }
+    button:focus-visible,a:focus-visible,input:focus-visible { outline:3px solid #e59329; outline-offset:3px; }
+    button.primary { background:var(--accent); border-color:var(--accent); color:white; }
+    .choices { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .choice { display:flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:13px; cursor:pointer; }
+    input { accent-color:var(--accent); }
+    .hint { color:var(--muted); font-size:13px; margin:12px 0 0; }
+    .navigation { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0; }
+    .navigation a { text-decoration:none; padding:6px 12px; background:#e2ecef; border-radius:20px; font-size:13px; color:#264758; }
+    .section-heading { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:28px 0 12px; }
+    .section-heading h2 { margin:0; font-size:22px; letter-spacing:-.5px; }
+    .section-heading span { font-size:13px; color:var(--muted); }
+    .table-shell { overflow:auto; max-height:75vh; border:1px solid #cfdae4; border-radius:14px; background:white; }
+    table { border-collapse:separate; border-spacing:0; width:100%; table-layout:fixed; font-size:13px; }
+    th,td { width:205px; min-width:205px; padding:15px; text-align:left; vertical-align:top; border-right:1px solid var(--line); border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+    tr:last-child th,tr:last-child td { border-bottom:0; }
+    tr > :last-child { border-right:0; }
+    thead th { position:sticky; top:0; z-index:3; background:#eaf1f5; color:#203d50; font-size:14px; box-shadow:0 1px 0 #cbd9e3; }
+    th:first-child { position:sticky; left:0; z-index:2; width:190px; min-width:190px; background:#f7f9fb; }
+    thead th:first-child { z-index:4; background:#dde8ef; }
+    tbody tr:nth-child(even) td { background:#fafcfd; }
+    .phone-name { display:block; font-size:15px; font-weight:800; margin-bottom:7px; }
+    .store { display:block; font-size:11px; font-weight:600; color:var(--muted); margin-bottom:8px; }
+    .tag { display:inline-block; font-size:10px; border-radius:5px; padding:3px 6px; background:#d4eee7; color:#075b4c; margin-top:4px; }
+    td.preferred { background:#f0f9f5; }
+    tbody tr:nth-child(even) td.preferred { background:#eaf5f0; }
+    .cost { font-size:19px; font-weight:800; white-space:nowrap; }
+    .sub { display:block; color:var(--muted); font-size:12px; margin-top:5px; }
+    .warning { color:#8b4b08; font-weight:650; }
+    .unknown { color:#6c6071; }
+    .empty { padding:34px; text-align:center; border:1px dashed #9eb2c2; border-radius:14px; background:white; }
+    .notes { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px; }
+    .panel { background:white; border:1px solid var(--line); border-radius:16px; padding:24px; }
+    .panel h2 { margin:0 0 14px; font-size:20px; }
+    .panel h3 { font-size:15px; margin:20px 0 6px; }
+    .panel ul,.panel ol { padding-left:20px; margin:10px 0; }
+    .panel li { margin:9px 0; }
+    .sources { columns:2; column-gap:32px; }
+    .sources li { break-inside:avoid; }
+    footer { margin:26px 0 8px; color:var(--muted); font-size:12px; }
+    [hidden] { display:none !important; }
+    @media(max-width:800px) { .wrap{padding:16px;} .hero{padding:26px;} .cards,.notes{grid-template-columns:1fr;} .sources{columns:1;} .section-heading{display:block;} .table-shell{max-height:72vh;} th:first-child{width:145px;min-width:145px;} }
+    @media print {
+      @page { size:A3 landscape; margin:10mm; }
+      body { background:white; font-size:10px; }
+      .wrap { padding:0; max-width:none; }
+      .hero { padding:14px; background:white; color:#142e40; border:1px solid #aaa; }
+      .hero p,.eyebrow { color:#333; }
+      h1 { font-size:25px; }
+      .toolbar,.navigation,.meta,.hint { display:none; }
+      .cards { margin:12px 0; gap:10px; }
+      .card { padding:10px; }
+      .card h2 { font-size:14px; }
+      .card p,.notice { font-size:10px; }
+      .price { font-size:16px; }
+      .table-shell { overflow:visible; max-height:none; border-radius:0; }
+      table { font-size:8px; }
+      th,td,th:first-child { min-width:0; width:auto; padding:6px; }
+      thead th,th:first-child { position:static; }
+      thead { display:table-header-group; }
+      tr { break-inside:avoid; }
+      .phone-name { font-size:10px; }
+      .cost { font-size:12px; }
+      .sub,.store,.tag { font-size:8px; }
+      .section-heading { break-after:avoid; margin-top:16px; }
+      .notes { display:block; }
+      .panel { margin-top:14px; }
+      a { color:inherit; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="eyebrow">The 256GB shortlist</div>
+      <h1>Nine phones. One clear comparison.</h1>
+      <p>Your Flipkart and Amazon picks, compared by price, actual RAM, screen, cameras, battery and long-term support. Choose the phones you want below, then scroll sideways to compare.</p>
+      <div class="meta"><span>Price snapshot: 20 October 2026</span><span>India variants</span><span>Offline-ready single HTML file</span><span>No live price feed</span></div>
+    </header>
+    <section class="cards" aria-label="Recommended shortlist">
+      <article class="card"><div class="label">RAM + everyday balance</div><h2>Motorola Edge 60 Fusion</h2><div class="price">Rs. 28,699</div><p>12GB / 256GB advertised. Light 180g body, 1.5K pOLED, OIS and expandable storage. Smaller battery; UFS 2.2.</p></article>
+      <article class="card"><div class="label">Performance + video</div><h2>realme P4 Pro</h2><div class="price">Rs. 30,999</div><p>8GB / 256GB. Snapdragon 7 Gen 4, UFS 3.1, 7,000mAh and front/rear 4K60. Check stock for your PIN code.</p></article>
+      <article class="card"><div class="label">Battery-first pick</div><h2>realme P4 Power</h2><div class="price">Rs. 32,999</div><p>8GB / 256GB. 10,001mAh with 80W charging and AMOLED. Large battery, but heavier than the other two.</p></article>
+    </section>
+    <aside class="notice">
+      <strong>Read before buying: these are researched specifications, not hands-on test results.</strong>
+      <p>Prices were observed in the shopping listings during our comparison on 20 October 2026, without a delivery PIN code. They are not guaranteed current checkout prices. Bank offers, cashback, seller, stock and additional fees can vary.</p>
+      <p><strong>Variant corrections:</strong> your Narzo link selects 6GB/128GB; its 6GB/256GB version is compared here. Your third Amazon phone is Moto G67 Power, and the last is Edge 60 <strong>Fusion</strong>. G67 physical RAM and POCO memory specifications need confirmation. Unverified details are explicitly marked.</p>
+    </aside>
+    <section class="toolbar" aria-label="Comparison controls">
+      <div class="toolbar-top">
+        <div><h2>Build your comparison</h2><div id="count" class="hint" role="status" aria-live="polite"></div></div>
+        <div class="actions">
+          <button type="button" id="all">All nine</button>
+          <button type="button" id="shortlist" class="primary">Recommended three</button>
+          <button type="button" id="ram">Verified 8GB+ RAM</button>
+          <button type="button" id="print">Print / Save PDF</button>
+        </div>
+      </div>
+      <div class="choices" id="choices"></div>
+      <p class="hint">Each table scrolls horizontally. Phone headers and the left specification column stay visible. Prices below exclude exchange values and additional fees.</p>
+    </section>
+    <nav class="navigation" aria-label="Jump to section">
+      <a href="#overview">Prices &amp; verdict</a><a href="#performance">Performance</a><a href="#display">Display</a><a href="#camera">Cameras</a><a href="#battery">Battery &amp; size</a><a href="#software">Software</a><a href="#extras">Connectivity</a><a href="#caveats">Buying notes</a><a href="#sources">Sources</a>
+    </nav>
+    <div id="empty" class="empty" hidden>Select at least one phone above to display its specifications.</div>
+    <div id="tables"></div>
+    <section class="notes" id="caveats">
+      <article class="panel">
+        <h2>How to read the comparison</h2>
+        <ul>
+          <li><strong>Actual RAM matters:</strong> 8GB + 8GB extended RAM is an 8GB physical-RAM phone. Virtual RAM uses storage and is not equivalent.</li>
+          <li><strong>Storage speed matters too:</strong> UFS 3.1 is generally faster than UFS 2.2. A larger RAM number alone does not make a weaker processor faster.</li>
+          <li><strong>Display quality:</strong> a 144Hz HD+ LCD is not automatically better than a 120Hz 1.5K OLED. Sharpness, contrast and real brightness matter.</li>
+          <li><strong>Brightness:</strong> local HDR peak brightness is not sustained full-screen outdoor brightness. Manufacturer peak numbers are not directly comparable.</li>
+          <li><strong>OIS:</strong> optical image stabilisation helps reduce camera shake. Megapixel counts alone do not establish image quality.</li>
+          <li><strong>Battery:</strong> capacity is not a measured runtime. Charging wattage is a maximum, not a constant speed or a full-charge time.</li>
+          <li><strong>Support:</strong> update commitments start at launch, not purchase. Battery-health and "fluency" claims are not Android-update promises.</li>
+          <li><strong>Durability:</strong> IP ratings do not mean permanent waterproofing. Liquid damage may not be covered by warranty.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h2>Verification &amp; purchase checklist</h2>
+        <ol>
+          <li><strong>G67 RAM:</strong> Amazon advertises 12GB/256GB; the retrieved Motorola support page lists 8GB with RAM Boost. Confirm physical RAM on the Indian model/box before ordering.</li>
+          <li><strong>POCO memory:</strong> Indian launch coverage reports LPDDR5X and UFS 4.1 for 256GB, but other databases disagree. Do not treat those details as manufacturer-verified.</li>
+          <li><strong>Edge seller data:</strong> Amazon technical fields were inconsistent. Motorola confirms that an Indian 12GB/256GB configuration exists; check the seller, model and invoice.</li>
+          <li><strong>Narzo storage:</strong> the original Amazon link is 128GB at Rs. 24,499. The separately checked 256GB listing was Rs. 28,999.</li>
+          <li><strong>Earlier prices:</strong> Vivo's Rs. 22,999 was a launch price, not the observed Rs. 34,249 listing price. Use the price snapshot, not launch pricing, to judge this deal.</li>
+          <li><strong>Fees and offers:</strong> Flipkart showed Rs. 199 on most listings and Rs. 129 on P4R. A "Buy at" figure may include conditional offers/cashback and is not an assured upfront discount.</li>
+          <li><strong>Stock:</strong> P4 Pro Birch Wood showed an out-of-stock indication. Verify delivery availability for your PIN code.</li>
+          <li><strong>Before paying:</strong> confirm 256GB, physical RAM, Indian warranty, charger contents, return/service policy, seller and final payable total.</li>
+        </ol>
+      </article>
+    </section>
+    <section class="panel" id="sources" style="margin-top:22px">
+      <h2>Specification sources &amp; original shopping links</h2>
+      <p class="hint">Manufacturer specifications take priority over seller technical fields. Secondary coverage is labelled where manufacturer confirmation was not obtained. Open product links in the price table to recheck offers.</p>
+      <ul class="sources" id="source-list"></ul>
+    </section>
+    <noscript><p class="notice">Enable JavaScript to render the comparison tables. This page uses only embedded JavaScript; no external libraries, account or network connection are needed to view the tables.</p></noscript>
+    <footer>Prepared from the comparison in this conversation. Static snapshot, not a live shopping service. Recommendations are based on specifications and observed prices, not laboratory benchmarks. Unknown or conflicting specifications have not been filled with guesses.</footer>
+  </main>
+  <script>
+    "use strict";
+    const unknown = "Not independently verified";
+    const phones = [
+      {
+        id:"power",name:"realme P4 Power",store:"Flipkart",recommended:true,verifiedRam:8,
+        url:"https://www.flipkart.com/realme-p4-power-5g-charger-box-transsilver-256-gb/p/itm756857550aae6?pid=MOBHN8YRNFNCF8QV",
+        price:32999,offer:'Displayed "Buy at Rs. 29,449"; eligibility/terms apply',fee:"Rs. 199 shown",variant:"8GB / 256GB",stock:"Check PIN code and seller",verdict:"Battery-first shortlist. Large capacity; heavier than Edge or P4 Pro.",
+        chip:"MediaTek Dimensity 7400 Ultra",process:"4nm",ram:"8GB LPDDR4X",storage:"256GB UFS 3.1",expand:"No",
+        screen:'6.8" AMOLED',resolution:"1280 x 2800 (1.5K class)",refresh:"144Hz",shape:"Curved",glass:"Gorilla Glass 7i reported",brightness:"6,500-nit manufacturer peak claim; not sustained full-screen brightness",
+        main:"50MP Sony main",ultra:"8MP",ois:"Yes",selfie:"16MP",rearVideo:"Up to 4K / 30fps",frontVideo:"1080p reported",cameraNote:"OIS + ultrawide; lower-resolution selfie camera than P4 Pro",
+        battery:"10,001mAh",charge:"80W",weight:"219g",dimensions:"162.3 x 76.2 x 9.1mm",reverse:"27W reverse wired reported",wireless:"Not listed / not confirmed",charger:"Listing explicitly says charger in the box",
+        os:"Android 16 / realme UI 7",updates:"3 major upgrades reported",security:unknown,
+        ip:"IP66 / IP68 / IP69 reported",finger:"In-display",wifi:"Wi-Fi 5 (manufacturer specification)",bluetooth:"5.4",nfc:"No",audio:"Exact speaker configuration not independently verified",jack:"No 3.5mm jack reported",sim:"Dual nano-SIM; no eSIM per manufacturer",sensors:"Exact sensor inventory not verified",
+        source:"https://www.realme.com/in/realme-p4-power-5g/specs"
+      },
+      {
+        id:"vivo",name:"vivo T5x",store:"Flipkart",recommended:false,verifiedRam:8,
+        url:"https://www.flipkart.com/vivo-t5x-5g-cosmic-green-256-gb/p/itm7da8aa253e72b?pid=MOBHQC8ZYMX7HHC8",
+        price:34249,offer:'Displayed "Buy at Rs. 29,924"; eligibility/terms apply',fee:"Rs. 199 shown",variant:"8GB / 256GB",stock:"Check PIN code and seller",verdict:"Poor value at the observed listing price; LCD at a higher price than P4 Pro.",
+        chip:"MediaTek Dimensity 7400 Turbo",process:"4nm",ram:"8GB LPDDR4X",storage:"256GB UFS 3.1",expand:"No",
+        screen:'6.76" LCD',resolution:"1080 x 2344 (FHD+)",refresh:"120Hz",shape:"Flat",glass:unknown,brightness:"1,200 nits HBM (manufacturer specification)",
+        main:"50MP Sony IMX852 + 2MP depth",ultra:"No",ois:"Not listed",selfie:"32MP",rearVideo:"Up to 4K reported",frontVideo:"Up to 4K reported",cameraNote:"Depth sensor is not an ultrawide camera",
+        battery:"7,200mAh",charge:"44W",weight:"219g",dimensions:"166.6 x 78.4 x 8.4mm",reverse:"Reverse wired supported (reported)",wireless:"Not listed / not confirmed",charger:"Included per manufacturer's box list",
+        os:"Android 16 / OriginOS 6",updates:"2 major upgrades",security:"4 years",
+        ip:"IP68 / IP69",finger:"Side-mounted",wifi:"Dual-band 2.4 / 5GHz",bluetooth:"5.4",nfc:"No",audio:"Stereo speakers reported",jack:"No 3.5mm jack reported",sim:"2 nano-SIMs; no memory-card slot",sensors:"Physical gyroscope; IR blaster; accelerometer, proximity, light and compass",
+        source:"https://www.vivo.com/in/products/param/t5x"
+      },
+      {
+        id:"p4r",name:"realme P4R",store:"Flipkart",recommended:false,verifiedRam:6,
+        url:"https://www.flipkart.com/realme-p4r-5g-lavender-glare-256-gb/p/itmb42ae388c1ef6?pid=MOBHMYR3M5QYWBGD",
+        price:28999,offer:'Displayed "Buy at Rs. 27,549"; eligibility/terms apply',fee:"Rs. 129 shown",variant:"6GB / 256GB",stock:"Check PIN code and seller",verdict:"Skip at this price: basic processor, HD+ LCD and only 6GB physical RAM.",
+        chip:"MediaTek Dimensity 6300",process:"6nm",ram:"6GB LPDDR4X",storage:"256GB UFS 2.2",expand:"Yes, microSD",
+        screen:'About 6.8" LCD',resolution:"720 x 1570 (HD+)",refresh:"144Hz",shape:"Flat",glass:"Panda glass reported",brightness:"1,200 nits HBM",
+        main:"50MP main, f/1.8",ultra:"No",ois:"No listed OIS",selfie:"8MP, f/2.0",rearVideo:"1080p / 30fps",frontVideo:"1080p reported",cameraNote:"Basic camera system; no ultrawide",
+        battery:"8,000mAh",charge:"45W SUPERVOOC",weight:"224g",dimensions:"166.4 x 78.2 x 8.8mm",reverse:unknown,wireless:"No (manufacturer specification)",charger:"Confirm seller's box contents",
+        os:"Android 16 / realme UI 7",updates:unknown,security:unknown,
+        ip:"IP65",finger:"Side-mounted capacitive",wifi:"Wi-Fi 5",bluetooth:"5.3",nfc:unknown,audio:unknown,jack:"Type-C audio; no 3.5mm jack reported",sim:"5G; exact SIM/card arrangement should be confirmed",sensors:"Manufacturer lists proximity, ambient light, e-compass and accelerometer",
+        source:"https://www.realme.com/in/realme-p4r-5g/specs"
+      },
+      {
+        id:"pro",name:"realme P4 Pro",store:"Flipkart",recommended:true,verifiedRam:8,
+        url:"https://www.flipkart.com/realme-p4-pro-5g-birch-wood-256-gb/p/itme41a54752cc21?pid=MOBHERXKVQED7HGC",
+        price:30999,offer:'Displayed "Buy at Rs. 29,449"; eligibility/terms apply',fee:"Rs. 199 shown",variant:"8GB / 256GB",stock:"Birch Wood showed an out-of-stock indication; verify PIN code",verdict:"Performance + video shortlist. Strong balance of chipset, display, battery and weight.",
+        chip:"Qualcomm Snapdragon 7 Gen 4",process:"4nm",ram:"8GB LPDDR4X",storage:"256GB UFS 3.1",expand:"No",
+        screen:'6.8" AMOLED',resolution:"1280 x 2800 (1.5K class)",refresh:"144Hz",shape:"Curved",glass:"Gorilla Glass 7i",brightness:"6,500-nit manufacturer peak claim; not sustained full-screen brightness",
+        main:"50MP Sony IMX896, f/1.8",ultra:"8MP, f/2.2, 112-degree FOV",ois:"Yes",selfie:"50MP, f/2.4",rearVideo:"Up to 4K / 60fps",frontVideo:"Up to 4K / 60fps",cameraNote:"Best video specifications here; actual photo quality requires sample testing",
+        battery:"7,000mAh",charge:"80W",weight:"189g",dimensions:"162.3 x 76.2 x 7.7mm",reverse:"Reverse wired reported; exact output not verified here",wireless:"Not listed / not confirmed",charger:"Confirm seller's box contents",
+        os:"Android 15 / realme UI 6",updates:"3 major upgrades",security:"4 years",
+        ip:"IP65 / IP66 (not IP68)",finger:"In-display optical",wifi:"Wi-Fi 6",bluetooth:"5.4",nfc:"No NFC reported",audio:"Stereo speakers",jack:"No 3.5mm jack",sim:"5G; confirm exact Indian SIM configuration",sensors:"Exact sensor inventory not verified",
+        source:"https://www.realme.com/in/realme-p4-pro-5g/specs"
+      },
+      {
+        id:"poco",name:"POCO X8 Power",store:"Flipkart",recommended:false,verifiedRam:8,
+        url:"https://www.flipkart.com/poco-x8-power-5g-black-256-gb/p/itm3438e419f61cc?pid=MOBHQ6XZZQTFHDSX",
+        price:34999,offer:'Displayed "Buy at Rs. 32,999"; eligibility/terms apply',fee:"Rs. 199 shown",variant:"8GB / 256GB",stock:"Check PIN code and seller",verdict:"Flat AMOLED + giant battery + long announced support. Higher price and weight; memory claims need checking.",
+        chip:"Qualcomm Snapdragon 6 Gen 5",process:"4nm",ram:"8GB; LPDDR5X reported, not manufacturer-verified here",storage:"256GB; UFS 4.1 reported in Indian launch coverage, conflicting databases",expand:"No",
+        screen:'6.83" AMOLED',resolution:"1280 x 2772 (1.5K class)",refresh:"120Hz",shape:"Flat",glass:"Gorilla Glass Victus 2",brightness:"3,500-nit peak reported; not sustained full-screen brightness",
+        main:"50MP main",ultra:"8MP",ois:"Yes, reported",selfie:"32MP",rearVideo:"Up to 4K / 30fps",frontVideo:"4K / 30fps reported",cameraNote:"Camera specifications reported in listings/secondary coverage",
+        battery:"10,000mAh",charge:"100W",weight:"229g",dimensions:"163.4 x 78.3 x 8.7mm",reverse:"27W reverse wired reported",wireless:"Not listed / not confirmed",charger:"Confirm Indian listing's box contents",
+        os:"Android 16 / HyperOS 3",updates:"4 major upgrades (Indian launch coverage)",security:"6 years (Indian launch coverage)",
+        ip:"IP66 / IP68 / IP69 / IP69K reported",finger:"In-display",wifi:"Indian specification not confirmed",bluetooth:"Indian specification not confirmed",nfc:"Conflicting sources; confirm Indian model",audio:"Stereo speakers / Dolby Atmos reported",jack:"No 3.5mm jack",sim:"5G; do not assume global eSIM support applies in India",sensors:"Exact Indian sensor inventory not verified",
+        source:"https://www.91mobiles.com/hub/poco-x8-x8-power-first-sale-begins-india-offers/"
+      },
+      {
+        id:"iqoo",name:"iQOO Z11 Lite 44W",store:"Amazon",recommended:false,verifiedRam:6,
+        url:"https://www.amazon.in/dp/B0H1X19T3Y",
+        price:26499,offer:"Not verified",fee:"Final checkout fees not verified",variant:"6GB / 256GB",stock:"Midnight Blue; check seller and delivery",verdict:"Not recommended at this price: basic processor, HD+ display and 5MP selfie camera.",
+        chip:"MediaTek Dimensity 6300",process:"6nm",ram:"6GB physical RAM",storage:"256GB; UFS 2.2 reported, manufacturer type not confirmed",expand:"Yes; shared SIM / microSD slot",
+        screen:'6.74" LCD',resolution:"720 x 1600 (HD+)",refresh:"120Hz reported",shape:"Flat",glass:unknown,brightness:"1,200-nit peak claim in listing",
+        main:"50MP Sony + 0.08MP auxiliary",ultra:"No",ois:"No listed OIS",selfie:"5MP, f/2.2",rearVideo:"1080p / 30fps reported",frontVideo:unknown,cameraNote:"Official Sony sensor listing: IMX852 / LYT505C; auxiliary sensor is not an ultrawide",
+        battery:"6,500mAh",charge:"44W FlashCharge",weight:"209g",dimensions:"167.4 x 77.1 x 8.4mm",reverse:"Reverse wired reported",wireless:"Not listed / not confirmed",charger:"Charger reported included; confirm seller",
+        os:"Android 16 / OriginOS 6",updates:"2 major upgrades (Amazon feature text)",security:"4 years (Amazon feature text)",
+        ip:"IP65",finger:"Side-mounted reported",wifi:"Dual-band 2.4 / 5GHz",bluetooth:"5.4",nfc:"No",audio:"Exact speaker configuration not independently verified",jack:"3.5mm jack reported; verify model",sim:"1 nano-SIM + 1 nano-SIM / microSD",sensors:"Virtual gyroscope; accelerometer, ambient light, proximity and e-compass; FM supported",
+        source:"https://www.iqoo.com/in/products/param/z11-Lite-44w"
+      },
+      {
+        id:"narzo",name:"realme Narzo 100x",store:"Amazon",recommended:false,verifiedRam:6,
+        url:"https://www.amazon.in/dp/B0H339X26J",
+        original:"https://www.amazon.in/dp/B0H339SP81",
+        price:28999,offer:"Not verified",fee:"Final checkout fees not verified",variant:"6GB / 256GB (corrected variant)",stock:"Flash Orange; original link is 6GB/128GB at Rs. 24,499",verdict:"Skip at this price: core hardware closely resembles P4R; better options near this budget.",
+        chip:"MediaTek Dimensity 6300",process:"6nm",ram:"6GB LPDDR4X",storage:"256GB UFS 2.2",expand:"Yes; shared slot",
+        screen:'About 6.8" LCD',resolution:"720 x 1570 (HD+)",refresh:"144Hz",shape:"Flat",glass:"Panda glass reported",brightness:"1,200 nits HBM",
+        main:"50MP main, f/1.8",ultra:"No",ois:"No listed OIS",selfie:"8MP, f/2.0",rearVideo:"1080p / 30fps",frontVideo:"1080p / 30fps",cameraNote:"Basic camera system; secondary lens details vary across descriptions",
+        battery:"8,000mAh",charge:"45W SUPERVOOC",weight:"224g",dimensions:"About 166.4 x 78.2 x 8.9mm",reverse:"13.5W reverse wired reported",wireless:"Not listed / not confirmed",charger:"Confirm seller's box contents",
+        os:"Android 16 / realme UI 7 reported",updates:"2 major upgrades (launch coverage)",security:"3 years (launch coverage)",
+        ip:"IP65",finger:"Side-mounted",wifi:"Wi-Fi 5",bluetooth:"5.3",nfc:unknown,audio:"Sources conflict on speaker configuration; not confirmed",jack:"Type-C audio; no 3.5mm jack reported",sim:"Hybrid dual SIM / microSD reported",sensors:"Exact sensor inventory not verified",
+        source:"https://www.realme.com/in/realme-narzo-100x-5g/specs"
+      },
+      {
+        id:"g67",name:"Moto G67 Power",store:"Amazon",recommended:false,verifiedRam:null,
+        url:"https://www.amazon.in/dp/B0H416MQ6S",
+        price:27148,offer:"Not verified",fee:"Final checkout fees not verified",variant:"12GB / 256GB advertised; RAM unresolved",stock:"Pantone Cilantro; verify exact Indian model",verdict:"Flat FHD+ LCD, big battery and headphone jack. Clarify physical RAM; shorter reported support.",
+        chip:"Qualcomm Snapdragon 7s Gen 2",process:"4nm",ram:"12GB advertised; Motorola support page lists 8GB + RAM Boost. Verify physical RAM.",storage:"256GB; exact UFS version not verified",expand:"No",
+        screen:'6.7" LCD',resolution:"1080 x 2400 (FHD+)",refresh:"120Hz",shape:"Flat",glass:"Gorilla Glass 7i",brightness:unknown,
+        main:"50MP Sony LYTIA 600, f/1.8",ultra:"8MP, f/2.2",ois:"Not listed by Motorola",selfie:"32MP, f/2.2",rearVideo:"Main: 4K / 30fps; FHD up to 60fps",frontVideo:"4K / 30fps",cameraNote:"Ultrawide also supports 4K / 30fps per Motorola",
+        battery:"7,000mAh",charge:"30W",weight:"210g",dimensions:"166.2 x 76.5 x 8.6mm",reverse:unknown,wireless:"Not listed / not confirmed",charger:"Confirm seller's box contents",
+        os:"Android 15 / Hello UI",updates:"1 major upgrade reported",security:"3 years reported",
+        ip:"IP64",finger:"Fingerprint reader; side-mounted reported",wifi:"Wi-Fi 5",bluetooth:"5.1",nfc:"No",audio:"Stereo speakers / Dolby Atmos",jack:"Yes, 3.5mm",sim:"Dual physical nano-SIM",sensors:"Gyroscope, accelerometer, proximity, ambient light and e-compass",
+        source:"https://en-us.support.motorola.com/app/answers/detail/a_id/189598/~/specifications---moto-g67-power-5g/"
+      },
+      {
+        id:"edge",name:"Motorola Edge 60 Fusion",store:"Amazon",recommended:true,verifiedRam:12,
+        url:"https://www.amazon.in/dp/B0F4641FNK",
+        price:28699,offer:"Not verified",fee:"Final checkout fees not verified",variant:"12GB / 256GB advertised; genuine configuration exists",stock:"Slipstream; seller fields contain errors, verify model/invoice",verdict:"Best fit for RAM + storage + light weight at observed price. Smaller battery and UFS 2.2 trade-offs.",
+        chip:"MediaTek Dimensity 7400 (India)",process:"4nm",ram:"12GB LPDDR4X configuration confirmed by Motorola",storage:"256GB UFS 2.2",expand:"Yes; up to 1TB microSD",
+        screen:'6.67" pOLED',resolution:"1220 x 2712 (1.5K class)",refresh:"120Hz",shape:"Quad-curved",glass:"Gorilla Glass 7i",brightness:"1,400 nits HBM; 4,500 nits HDR peak (manufacturer)",
+        main:"50MP Sony LYT-700C",ultra:"13MP",ois:"Yes",selfie:"32MP",rearVideo:"Up to 4K / 30fps",frontVideo:"Up to 4K / 30fps",cameraNote:"Versatile OIS + ultrawide setup; actual image quality requires sample testing",
+        battery:"5,500mAh",charge:"68W TurboPower",weight:"180.1g",dimensions:"161.2 x 73.1 x 8.3mm",reverse:unknown,wireless:"Not listed / not confirmed",charger:"68W charger reported included; confirm seller",
+        os:"Android 15 / Hello UI",updates:"3 major upgrades",security:"4 years",
+        ip:"IP68 / IP69; MIL-STD-810H certification",finger:"In-display",wifi:"Wi-Fi 6",bluetooth:"5.4",nfc:"No (India)",audio:"Stereo speakers / Dolby Atmos",jack:"No 3.5mm; USB-C audio",sim:"India: dual physical SIM; microSD arrangement needs confirmation",sensors:"Physical gyroscope, proximity, ambient light, accelerometer and e-compass",
+        source:"https://en-in.support.motorola.com/app/answers/detail/a_id/187360/~/specifications---motorola-edge-60-fusion"
+      }
+    ];
+    const sections = [
+      {id:"overview",title:"01 / Prices & buying verdict",note:"Observed listing prices, not guaranteed live offers",rows:[
+        ["Selected configuration","variant"],["Listed price","price"],["Conditional offer","offer"],["Additional fee","fee"],["Stock / listing notes","stock"],["Buying verdict","verdict"],["Product listing","url"]]},
+      {id:"performance",title:"02 / Performance & memory",note:"Physical RAM only; reported details labelled",rows:[
+        ["Processor","chip"],["Manufacturing process","process"],["Physical RAM","ram"],["Storage / speed","storage"],["Memory-card expansion","expand"]]},
+      {id:"display",title:"03 / Display",note:"Peak brightness is not sustained outdoor brightness",rows:[
+        ["Screen / technology","screen"],["Resolution","resolution"],["Refresh rate","refresh"],["Screen shape","shape"],["Cover glass","glass"],["Brightness specification","brightness"]]},
+      {id:"camera",title:"04 / Cameras & video",note:"Specification comparison, not a photo-quality test",rows:[
+        ["Main rear camera","main"],["Ultrawide camera","ultra"],["Optical stabilisation","ois"],["Selfie camera","selfie"],["Rear video maximum","rearVideo"],["Front video maximum","frontVideo"],["Camera notes","cameraNote"]]},
+      {id:"battery",title:"05 / Battery, charging & size",note:"Runtime and charge times have not been measured",rows:[
+        ["Battery capacity","battery"],["Maximum wired charging","charge"],["Weight","weight"],["Dimensions (H x W x D)","dimensions"],["Reverse charging","reverse"],["Wireless charging","wireless"],["Charger / box","charger"]]},
+      {id:"software",title:"06 / Software & support",note:"Launch OS; support periods start at launch",rows:[
+        ["Launch software","os"],["Android upgrade commitment","updates"],["Security support","security"]]},
+      {id:"extras",title:"07 / Durability & connectivity",note:"All nine support 5G; check exact Indian model bands",rows:[
+        ["Dust / water protection","ip"],["Fingerprint reader","finger"],["Wi-Fi","wifi"],["Bluetooth","bluetooth"],["NFC","nfc"],["Speakers","audio"],["Headphone connection","jack"],["SIM / network notes","sim"],["Sensors / other extras","sensors"]]}
+    ];
+    const selected = new Set(phones.map(p=>p.id));
+    const money = value => "Rs. " + value.toLocaleString("en-IN");
+    function make(tag,text,className) {
+      const node=document.createElement(tag);
+      if(text!==undefined) node.textContent=text;
+      if(className) node.className=className;
+      return node;
+    }
+    function externalLink(url,text) {
+      const link=make("a",text);
+      link.href=url; link.target="_blank"; link.rel="noopener noreferrer";
+      return link;
+    }
+    function render() {
+      const visible=phones.filter(p=>selected.has(p.id));
+      document.getElementById("count").textContent=visible.length+" of 9 phones selected";
+      document.getElementById("empty").hidden=visible.length!==0;
+      const root=document.getElementById("tables"); root.replaceChildren();
+      document.querySelectorAll("#choices input").forEach(input=>{input.checked=selected.has(input.value);});
+      if(!visible.length) return;
+      for(const section of sections) {
+        const container=make("section"); container.id=section.id;
+        const heading=make("div",undefined,"section-heading");
+        const title=make("h2",section.title); title.id=section.id+"-title";
+        heading.append(title,make("span",section.note));
+        const shell=make("div",undefined,"table-shell"); shell.tabIndex=0;
+        shell.setAttribute("role","region"); shell.setAttribute("aria-labelledby",title.id);
+        const table=make("table"); table.setAttribute("aria-labelledby",title.id);
+        table.style.minWidth=(190+visible.length*205)+"px";
+        const thead=make("thead"), head=make("tr"), first=make("th","Specification");
+        first.scope="col"; head.append(first);
+        for(const p of visible) {
+          const th=make("th"); th.scope="col";
+          th.append(make("span",p.name,"phone-name"),make("span",p.store+" | "+p.variant,"store"));
+          if(p.recommended) th.append(make("span","SHORTLIST","tag"));
+          head.append(th);
+        }
+        thead.append(head); table.append(thead);
+        const tbody=make("tbody");
+        for(const [label,key] of section.rows) {
+          const row=make("tr"), name=make("th",label); name.scope="row"; row.append(name);
+          for(const p of visible) {
+            const td=make("td",undefined,p.recommended?"preferred":"");
+            if(key==="price") td.append(make("span",money(p.price),"cost"),make("span","Observed 20 Oct 2026","sub"));
+            else if(key==="url") {
+              td.append(externalLink(p.url,"Open "+p.store+" listing"));
+              if(p.original) {
+                const original=make("span",undefined,"sub");
+                original.append(externalLink(p.original,"Original 128GB link")); td.append(original);
+              }
+            } else {
+              td.textContent=p[key];
+              if(/conflict|unresolved|out-of-stock|Verify physical|not manufacturer-verified|seller fields contain errors/i.test(p[key])) td.classList.add("warning");
+              else if(p[key]===unknown) td.classList.add("unknown");
+            }
+            row.append(td);
+          }
+          tbody.append(row);
+        }
+        table.append(tbody); shell.append(table); container.append(heading,shell); root.append(container);
+      }
+    }
+    for(const p of phones) {
+      const label=make("label",undefined,"choice"), input=make("input");
+      input.type="checkbox"; input.value=p.id; input.checked=true;
+      input.addEventListener("change",()=>{if(input.checked) selected.add(p.id); else selected.delete(p.id); render();});
+      label.append(input,document.createTextNode(p.name)); document.getElementById("choices").append(label);
+      const li=make("li"); li.append(externalLink(p.source,p.name+(p.id==="poco"?" - Indian launch coverage":" - manufacturer specification")));
+      document.getElementById("source-list").append(li);
+    }
+    for(const [text,url] of [
+      ["vivo T5x - launch pricing and support","https://www.91mobiles.com/hub/vivo-t5x-launched-in-india-price-specifications-sale/"],
+      ["Narzo 100x - launch pricing and update policy","https://www.91mobiles.com/hub/realme-narzo-100x-launched-india-price-specifications-sale/"],
+      ["Narzo 100x - secondary specification coverage","https://www.fonearena.com/blog/487403/realme-narzo-100x-5g-price-india-specifications.html"],
+      ["POCO X8 Power - secondary database (some fields conflict)","https://www.gsmarena.com/xiaomi_poco_x8_power_5g-14912.php"]
+    ]) {
+      const li=make("li"); li.append(externalLink(url,text)); document.getElementById("source-list").append(li);
+    }
+    function selectWhere(predicate) {
+      selected.clear(); phones.filter(predicate).forEach(p=>selected.add(p.id)); render();
+    }
+    document.getElementById("all").addEventListener("click",()=>selectWhere(()=>true));
+    document.getElementById("shortlist").addEventListener("click",()=>selectWhere(p=>p.recommended));
+    document.getElementById("ram").addEventListener("click",()=>selectWhere(p=>p.verifiedRam!==null&&p.verifiedRam>=8));
+    document.getElementById("print").addEventListener("click",()=>window.print());
+    render();
+  </script>
+</body>
+</html>
